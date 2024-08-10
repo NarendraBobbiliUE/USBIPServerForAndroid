@@ -20,13 +20,21 @@ import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+// Define UsbReceiver class
+class UsbReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        // Handle USB permission broadcast here
+    }
+}
+
 public class UsbIpConfig extends ComponentActivity {
     private Button serviceButton;
     private TextView serviceStatus;
     private TextView serviceReadyText;
     
     private boolean running;
-    private final UsbReceiver usbReceiver = new UsbReceiver();  // Make sure to define this receiver
+    private final UsbReceiver usbReceiver = new UsbReceiver();
 
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -47,7 +55,6 @@ public class UsbIpConfig extends ComponentActivity {
         }
     }
 
-    // Elegant Stack Overflow solution to querying running services
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
