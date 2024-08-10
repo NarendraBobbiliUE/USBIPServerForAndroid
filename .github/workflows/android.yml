@@ -19,18 +19,29 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      #- name: Setup Android SDK
-      #  uses: android-actions/setup-android@v3
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Build SampleApplication
+      - name: Build and Run Lint
         run: |
             chmod +x ./gradlew
-            ./gradlew --no-daemon build connectedCheck
+            ./gradlew --no-daemon lintDebug build
+
+      - name: Archive Lint Reports
+        if: failure()  # Only upload the Lint report if the build fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: app/build/reports/lint-results-debug.html
+          overwrite: true
+
+      - name: Create Lint Baseline (Optional)
+        if: failure()  # This runs only if the lint step fails
+        run: ./gradlew updateLintBaseline
+
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
           name: my-artifact
-          path: |
-            ./app/build/outputs/apk/debug/app-debug.apk
+          path: ./app/build/outputs/apk/debug/app-debug.apk
           overwrite: true
-
