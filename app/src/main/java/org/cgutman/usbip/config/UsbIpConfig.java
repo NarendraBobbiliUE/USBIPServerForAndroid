@@ -1,16 +1,9 @@
 package org.cgutman.usbip.config;
 
-import androidx.core.content.ContextCompat;
-import org.cgutman.usbip.service.UsbIpService;
-import org.cgutman.usbipserverforandroid.R;
-
-import android.Manifest;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,14 +12,15 @@ import android.widget.TextView;
 import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 
-// Define UsbReceiver class
-class UsbReceiver extends BroadcastReceiver {
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        // Handle USB permission broadcast here
-    }
-}
+import android.Manifest;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.content.pm.PackageManager;
+
+import org.cgutman.usbip.service.UsbIpService;
+import org.cgutman.usbipserverforandroid.R;
 
 public class UsbIpConfig extends ComponentActivity {
     private Button serviceButton;
@@ -97,7 +91,7 @@ public class UsbIpConfig extends ComponentActivity {
             }
         });
 
-        // Updated receiver registration with ContextCompat.registerReceiver
+        // Register receiver with the correct ContextCompat API
         IntentFilter filter = new IntentFilter("org.cgutman.usbipserverforandroid.USB_PERMISSION");
         ContextCompat.registerReceiver(this, usbReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
     }
@@ -105,7 +99,15 @@ public class UsbIpConfig extends ComponentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Unregister the receiver if needed
+        // Unregister the receiver correctly
         unregisterReceiver(usbReceiver);
+    }
+
+    // Define UsbReceiver class
+    public static class UsbReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Handle USB permission broadcast here
+        }
     }
 }
